@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>title</title>
+</head>
+<body>
+
+<script src="lib/three.min.js"></script>
+<script src="lib/cannon.min.js"></script>
+<script>
+
+
+//
+// cannon.js (物理 (時間、重さ、早さ) の世界) の設定
+// http://schteppe.github.io/cannon.js/docs/
+//
+var world = new CANNON.World();
+world.gravity.set( 0, 0, 0 );        //無重力
+// world.gravity.set( 0, -9.82, 0 ); //地球と同じ重力
+//物理の計算方法(アルゴリズムを選ぶことができる(将来予定?) )
+world.broadphase = new CANNON.NaiveBroadphase();
+
+
+
+//
+// three.js (表示の世界) の設定
+//
+var width = window.innerWidth;
+var height = window.innerHeight;
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera( 40, width / height, .1, 500 );
+camera.position.set( 0, 5, 30 );
+
+var renderer = new THREE.WebGLRenderer( { stencil: !false } );
+renderer.setSize( width, height );
+document.body.appendChild( renderer.domElement );
+
+var ambientLight = new THREE.AmbientLight( 0xeeeeee );
+scene.add( ambientLight );
+
+
+
+
+
+//
+// cannon.js に物理計算用の物体をつくる
+// 表示はない、重さや早さで できている
+//
+
+var radius1 = 1; // 半径
+var sphere1Shape = new CANNON.Sphere( radius1 );
+var sphere1Body  = new CANNON.Body( {
+  mass: 5 // 重さ
+} );
+sphere1Body.addShape( sphere1Shape );
+sphere1Body.position.set( 3, 0, 0 );
+sphere1Body.velocity.set( -1, 0, 0 );  // ベロシティーは早さの意味
+world.add( sphere1Body );
+
+
+var radius2 = 2; // 半径
+var sphere2Shape = new CANNON.Sphere( radius2 );
+var sphere2Body  = new CANNON.Body( {
+  mass: 5 // 重さ
+} );
+sphere2Body.addShape( sphere2Shape );
+sphere2Body.position.set( -3, 0, 0 );
+sphere2Body.velocity.set(  1, 0, 0 );  // ベロシティーは早さの意味
+world.add( sphere2Body );
+
+
+
+
+//
+// three.js に表示用の物体をつくる
+// three.js の世界では、物の位置を動かしてはいけない
+//
+
+var sphere1Mesh = new THREE.Mesh(
+  new THREE.SphereGeometry( radius1, 16, 16 ),
+  new THREE.MeshNormalMaterial()
+);
+scene.add( sphere1Mesh );
+
+
+var sphere2Mesh = new THREE.Mesh(
+  new THREE.SphereGeometry( radius2, 16, 16 ),
+  new THREE.MeshNormalMaterial()
+);
+scene.add( sphere2Mesh );
+
+
+;( function update () {
+
+  requestAnimationFrame( update );
+
+  world.step( 1 / 60 ); //少しだけ時間を進める
+
+  // 経過時間分、動いた結果を three.js の球体に反映する
+  sphere1Mesh.position.copy( sphere1Body.position );
+  sphere2Mesh.position.copy( sphere2Body.position );
+
+  renderer.render( scene, camera );
+
+} )();
+
+</script>
+
+</body>
+</html>

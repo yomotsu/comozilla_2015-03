@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>basic</title>
+</head>
+<body>
+
+<script src="lib/three.min.js"></script>
+<script>
+
+var width = window.innerWidth;
+var height = window.innerHeight;
+var clock = new THREE.Clock();
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera( 40, width / height, .1, 500 );
+camera.position.set( 0, 5, 30 );
+
+var renderer = new THREE.WebGLRenderer( { stencil: !false } );
+renderer.setSize( width, height );
+document.body.appendChild( renderer.domElement );
+
+var directionalLight = new THREE.DirectionalLight( 0xffffff );
+directionalLight.position.set( .5, .8, .5 );
+scene.add( directionalLight );
+
+
+var boxGeometry = new THREE.BoxGeometry( 10, 10, 10 );
+
+var boxMaterial = new THREE.MeshPhongMaterial( {
+                    color: 0xff0000,
+                    specular: 0xffffff,
+                    shininess: 30,
+                    // wireframe: true,
+                  } )
+
+var box = new THREE.Mesh( boxGeometry, boxMaterial );
+scene.add( box );
+
+
+;( function update () {
+
+  requestAnimationFrame( update );
+
+  var elapsed = clock.getElapsedTime();
+
+  camera.position.set(
+    Math.sin( elapsed ) * 30,
+    Math.sin( elapsed ) * 20,
+    Math.cos( elapsed ) * 30
+  );
+
+  camera.lookAt( scene.position );
+
+  renderer.render( scene, camera );
+
+} )();
+
+</script>
+
+</body>
+</html>

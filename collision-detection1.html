@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>title</title>
+</head>
+<body>
+
+<script src="lib/three.min.js"></script>
+<script>
+
+var width = window.innerWidth;
+var height = window.innerHeight;
+var scene = new THREE.Scene();
+
+var camera = new THREE.PerspectiveCamera( 40, width / height, .1, 500 );
+camera.position.set( 0, 5, 30 );
+
+var renderer = new THREE.WebGLRenderer( { stencil: !false } );
+renderer.setSize( width, height );
+document.body.appendChild( renderer.domElement );
+
+var ambientLight = new THREE.AmbientLight( 0xeeeeee );
+scene.add( ambientLight );
+
+var sphere1 = new THREE.Mesh(
+  new THREE.SphereGeometry( 1, 16, 16 ),
+  new THREE.MeshNormalMaterial()
+);
+sphere1.position.set( 3, 0, 0 );
+scene.add( sphere1 );
+
+var sphere2 = new THREE.Mesh(
+  new THREE.SphereGeometry( 1.5, 16, 16 ),
+  new THREE.MeshNormalMaterial()
+);
+sphere2.position.set( -3, 0, 0 );
+scene.add( sphere2 );
+
+
+;( function update () {
+
+  requestAnimationFrame( update );
+
+  sphere1.position.x += -.01;
+  sphere2.position.x +=  .01;
+
+  if ( sphere1.position.x < -5 ) {
+
+    sphere1.position.x =  3;
+    sphere2.position.x = -3;
+
+  }
+
+  renderer.render( scene, camera );
+
+} )();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>title</title>
+</head>
+<body>
+
+<script src="lib/three.min.js"></script>
+<script>
+
+var width = window.innerWidth;
+var height = window.innerHeight;
+var clock = new THREE.Clock();
+var scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2( 0xccccff, 0.01 );
+
+var camera = new THREE.PerspectiveCamera( 40, width / height, .1, 500 );
+camera.position.set( 0, 5, 30 );
+
+var renderer = new THREE.WebGLRenderer( { stencil: !false } );
+renderer.setSize( width, height );
+document.body.appendChild( renderer.domElement );
+
+var ambientLight = new THREE.AmbientLight( 0xeeeeee );
+scene.add( ambientLight );
+
+
+var materials = [
+  new THREE.MeshBasicMaterial( {
+    map: THREE.ImageUtils.loadTexture('./skybox/right.jpg' ),
+    // side: THREE.BackSide
+  } ),
+
+  new THREE.MeshBasicMaterial( {
+    map: THREE.ImageUtils.loadTexture('./skybox/left.jpg' ),
+    // side: THREE.BackSide
+  } ),
+
+  new THREE.MeshBasicMaterial( {
+    map: THREE.ImageUtils.loadTexture('./skybox/top.jpg' ),
+    // side: THREE.BackSide
+  } ),
+
+  new THREE.MeshBasicMaterial( {
+    map: THREE.ImageUtils.loadTexture('./skybox/bottom.jpg' ),
+    // side: THREE.BackSide
+  } ),
+
+  new THREE.MeshBasicMaterial( {
+    map: THREE.ImageUtils.loadTexture('./skybox/front.jpg' ),
+    // side: THREE.BackSide
+  } ),
+
+  new THREE.MeshBasicMaterial( {
+    map: THREE.ImageUtils.loadTexture('./skybox/back.jpg' ),
+    // side: THREE.BackSide
+  } )
+
+];
+
+
+var skyBox = new THREE.Mesh( 
+  new THREE.BoxGeometry( 10, 10, 10 ),
+  new THREE.MeshFaceMaterial( materials )
+);
+scene.add( skyBox );
+
+
+;( function update () {
+
+  requestAnimationFrame( update );
+
+  var elapsed = clock.getElapsedTime();
+
+  camera.position.set(
+    Math.sin( elapsed ) * 30,
+    Math.sin( elapsed ) * 20,
+    Math.cos( elapsed ) * 30
+  );
+
+  camera.lookAt( scene.position );
+
+  renderer.render( scene, camera );
+
+} )();
+
+</script>
+
+</body>
+</html>
